@@ -1340,6 +1340,11 @@
     }
 
     @media (max-width: 940px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
       h1 { font-size: clamp(46px, 10vw, 76px); }
       .hero-card, .hero-side { min-height: auto; }
       .dossier-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1369,8 +1374,89 @@
     }
 
     @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 28px, var(--max));
+        padding-top: 18px;
+      }
+
+      .nav {
+        padding: 10px 2px 26px;
+      }
+
+      .brand {
+        font-size: 16px;
+        letter-spacing: -0.045em;
+      }
+
+      .hero {
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
       .hero-card, .panel, .hero-side, .result-card { border-radius: 24px; padding: 22px; }
+
+      .hero-card {
+        min-height: 0;
+        padding-top: 28px;
+        padding-bottom: 26px;
+      }
+
+      .hero-card::before {
+        top: 20px;
+        font-size: clamp(52px, 22vw, 84px);
+      }
+
+      .hero-card::after {
+        inset: 14px;
+        border-radius: 18px;
+      }
+
+      .eyebrow {
+        align-self: stretch;
+        justify-content: center;
+        margin-bottom: 18px;
+        padding: 9px 12px;
+        font-size: 12px;
+        line-height: 1.35;
+        text-align: center;
+      }
+
       h1 { font-size: clamp(42px, 14vw, 58px); }
+
+      .hero p,
+      .decoder-copy {
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      .hero p {
+        margin-top: 18px;
+      }
+
+      .hero-side {
+        min-height: 0;
+      }
+
+      .hero-side::after {
+        width: 230px;
+        height: 230px;
+        right: -96px;
+        bottom: -92px;
+      }
+
+      .stack-title {
+        margin-bottom: 14px;
+      }
+
+      .feature-grid {
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .feature {
+        padding: 16px;
+      }
+
       .dossier-tabs,
       .tabs,
       .share-grid,

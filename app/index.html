@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AutoBi-Dossier</title>
+  <meta name="description" content="Build a private archetype dossier from colours, animal instincts, and temperament scoring." />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+</head>
+<body>
+  <main class="shell">
+    <nav class="nav" aria-label="Main navigation">
+      <div class="brand"><span>The AutoBi-Dossier</span></div>
+    </nav>
+
+    <section class="hero" aria-label="The Dossier introduction">
+      <div class="hero-card">
+        <div class="eyebrow">Build your archetype. Expose your shadow. Compare your chemistry.</div>
+        <h1>The AutoBi-Dossier</h1>
+        <p>A symbolic personality file built from your colours, animal instincts, and temperament pattern. Fast, sharp, social, and weirdly revealing.</p>
+        <div class="controls">
+          <button onclick="document.getElementById('builder').scrollIntoView({behavior: 'smooth'})">Start building</button>
+        </div>
+      </div>
+
+      <aside class="hero-side" aria-label="What gets decoded">
+        <div>
+          <div class="stack-title">What Gets Decoded</div>
+          <p class="decoder-copy">
+            Your colours reveal the emotional signal. Your animals reveal the instinct stack. Your temperament reveals the operating system.
+          </p>
+          <div class="feature-grid">
+            <div class="feature"><strong>01 / Colours</strong><span>The emotional signal: edge, softness, mystery, heat, calm, status.</span></div>
+            <div class="feature"><strong>02 / Instincts</strong><span>Three animals, chosen by instinct. The layer mapping stays hidden until the reveal.</span></div>
+            <div class="feature"><strong>03 / Temperament</strong><span>The operating system underneath the signal: drive, steadiness, depth, or spark.</span></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="builder" class="builder-grid">
+      <div class="dossier-tabs" aria-label="Dossier sections">
+        <button class="step-tab" type="button" onclick="scrollToStep('identity')"><span>01</span>Identity</button>
+        <button class="step-tab" type="button" onclick="scrollToStep('colours')"><span>02</span>Colours</button>
+        <button class="step-tab" type="button" onclick="scrollToStep('instincts')"><span>03</span>Instincts</button>
+        <button class="step-tab" type="button" onclick="scrollToStep('temperament')"><span>04</span>Temperament</button>
+        <button class="step-tab" type="button" onclick="document.getElementById('result').scrollIntoView({behavior: 'smooth'})"><span>05</span>Reveal</button>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Profile mode">
+        <button id="single-tab" class="tab active" type="button"><span>Mode</span>Single dossier</button>
+        <button id="compatibility-tab" class="tab" type="button"><span>Mode</span>Compatibility</button>
+      </div>
+
+      <div id="people" class="people-grid">
+        <form id="person-a" class="panel person-form" data-person="A"></form>
+        <form id="person-b" class="panel person-form" data-person="B" style="display:none"></form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Reveal the dossier</h2>
+            <p class="small-note">Answer fast, keep it instinctive, and let the profile sharpen itself. Unknown animals and colours are saved locally for future library expansion.</p>
+          </div>
+          <div class="controls" style="margin:0">
+            <button id="generate" type="button">Generate dossier</button>
+            <button id="clear" class="secondary" type="button">Clear</button>
+          </div>
+        </div>
+        <div id="unknown-warning" class="unknowns"></div>
+      </div>
+    </section>
+
+    <section id="result" class="result" aria-live="polite"></section>
+
+    <section id="unknown-admin" class="panel" style="margin-top:20px">
+      <div class="panel-head">
+        <div>
+          <h2>Pending library entries</h2>
+          <p class="small-note">New animals and colours are kept here for future expansion. For now, this review list stays on this device.</p>
+        </div>
+        <div class="controls" style="margin:0">
+          <button class="secondary" id="refresh-unknowns" type="button">Refresh</button>
+          <button class="ghost" id="clear-unknowns" type="button">Clear unknowns</button>
+        </div>
+      </div>
+      <div id="unknown-list" class="small-note">No unknown inputs logged yet.</div>
+    </section>
+
+    <p class="footer-note">Built for self-reflection, conversation, and entertainment. Not clinical advice.</p>
+  </main>
+  <script src="../js/data/temperaments.js"></script>
+  <script src="../js/data/temperamentQuestions.js"></script>
+  <script src="../js/data/colours.js"></script>
+  <script src="../js/data/colourAliases.js"></script>
+  <script src="../js/data/animals.js"></script>
+  <script src="../js/data/animalAliases.js"></script>
+  <script src="../js/data/copy.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/engine/normalize.js"></script>
+  <script src="../js/engine/resolveInputs.js"></script>
+  <script src="../js/ui/forms.js"></script>
+  <script src="../js/engine/temperamentParser.js"></script>
+  <script src="../js/engine/temperamentScoring.js"></script>
+  <script src="../js/engine/profileBuilder.js"></script>
+  <script src="../js/engine/archetypeNaming.js"></script>
+  <script src="../js/ui/renderShareCard.js"></script>
+  <script src="../js/ui/renderResults.js"></script>
+  <script src="../js/engine/compatibility.js"></script>
+  <script src="../js/engine/unknownInputs.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

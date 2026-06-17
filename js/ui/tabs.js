@@ -1,0 +1,1 @@
+// Tabs are currently initialized in js/app.js. Split here when the mode controls grow.

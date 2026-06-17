@@ -1,0 +1,1 @@
+let currentMode = "single";

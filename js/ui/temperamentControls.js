@@ -1,0 +1,1 @@
+// Temperament chip/input rendering currently lives in js/ui/forms.js.

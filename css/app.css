@@ -692,7 +692,7 @@
     .bar span {
       display: block;
       height: 100%;
-      background: linear-gradient(90deg, var(--purple), var(--purple-2));
+      background: linear-gradient(90deg, var(--deep-red-2), var(--purple), var(--purple-2));
       border-radius: 99px;
     }
 
@@ -773,6 +773,9 @@
       --line-strong: rgba(218, 196, 255, 0.30);
       --purple: #8b5cf6;
       --purple-2: #c7a7ff;
+      --deep-red: #3b0710;
+      --deep-red-2: #7f1d2d;
+      --velvet-red: #a3344c;
       --silver: rgba(248, 243, 255, 0.78);
       --radius-lg: 30px;
       --radius-md: 20px;
@@ -795,11 +798,11 @@
     body::after {
       opacity: 0.82;
       background:
-        radial-gradient(ellipse at 0% 100%, rgba(139, 92, 246, 0.34), transparent 34%),
-        radial-gradient(ellipse at 18% 92%, rgba(199, 167, 255, 0.18), transparent 26%),
-        radial-gradient(ellipse at 66% 24%, rgba(139, 92, 246, 0.12), transparent 36%);
-      filter: blur(20px);
-      animation: smokeDrift 18s ease-in-out infinite alternate;
+        radial-gradient(ellipse at 0% 100%, rgba(127, 29, 45, 0.36), transparent 34%),
+        radial-gradient(ellipse at 18% 92%, rgba(163, 52, 76, 0.20), transparent 28%),
+        radial-gradient(ellipse at 66% 24%, rgba(139, 92, 246, 0.16), transparent 36%);
+      filter: blur(22px);
+      animation: smokeDrift 14s ease-in-out infinite alternate;
     }
 
     .shell::before,
@@ -813,12 +816,12 @@
       pointer-events: none;
       z-index: -1;
       background:
-        radial-gradient(ellipse at 12% 84%, rgba(118, 65, 255, 0.34), transparent 24%),
-        radial-gradient(ellipse at 34% 64%, rgba(198, 167, 255, 0.14), transparent 28%),
-        radial-gradient(ellipse at 62% 30%, rgba(139, 92, 246, 0.16), transparent 26%);
+        radial-gradient(ellipse at 12% 84%, rgba(127, 29, 45, 0.40), transparent 24%),
+        radial-gradient(ellipse at 34% 64%, rgba(163, 52, 76, 0.18), transparent 30%),
+        radial-gradient(ellipse at 62% 30%, rgba(139, 92, 246, 0.20), transparent 28%);
       filter: blur(34px);
       transform: rotate(-14deg);
-      animation: smokeWaft 22s ease-in-out infinite alternate;
+      animation: smokeWaft 18s ease-in-out infinite alternate;
     }
 
     .shell::after {
@@ -828,18 +831,18 @@
       height: 88vh;
       opacity: 0.42;
       filter: blur(46px);
-      animation-duration: 29s;
+      animation-duration: 24s;
       animation-delay: -7s;
     }
 
     @keyframes smokeWaft {
-      from { transform: translate3d(-3vw, 3vh, 0) rotate(-18deg) scale(0.96); opacity: 0.42; }
-      to { transform: translate3d(26vw, -22vh, 0) rotate(8deg) scale(1.12); opacity: 0.76; }
+      from { transform: translate3d(-4vw, 4vh, 0) rotate(-18deg) scale(0.96); opacity: 0.42; }
+      to { transform: translate3d(30vw, -25vh, 0) rotate(9deg) scale(1.14); opacity: 0.80; }
     }
 
     @keyframes smokeDrift {
       from { transform: translate3d(-2vw, 2vh, 0) scale(1); }
-      to { transform: translate3d(8vw, -6vh, 0) scale(1.08); }
+      to { transform: translate3d(10vw, -8vh, 0) scale(1.1); }
     }
 
     .shell {
@@ -889,7 +892,8 @@
       border: 1px solid rgba(255,255,255,0.15);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.048)),
-        radial-gradient(circle at 22% 0%, rgba(139,92,246,0.16), transparent 32%);
+        radial-gradient(circle at 18% 0%, rgba(127, 29, 45, 0.18), transparent 30%),
+        radial-gradient(circle at 84% 8%, rgba(139,92,246,0.14), transparent 32%);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
@@ -927,8 +931,8 @@
       align-self: flex-start;
       gap: 8px;
       color: var(--purple-2);
-      background: rgba(139, 92, 246, 0.16);
-      border: 1px solid rgba(199, 167, 255, 0.28);
+      background: linear-gradient(135deg, rgba(127, 29, 45, 0.20), rgba(139, 92, 246, 0.14));
+      border: 1px solid rgba(199, 167, 255, 0.30);
       border-radius: 999px;
       padding: 10px 14px;
       font-size: 13px;
@@ -966,7 +970,7 @@
       border: 0;
       border-radius: 999px;
       transform: none;
-      background: radial-gradient(circle, rgba(139,92,246,0.32), transparent 68%);
+      background: radial-gradient(circle, rgba(127, 29, 45, 0.26), rgba(139,92,246,0.18) 38%, transparent 70%);
     }
 
     .stack-title {
@@ -1015,8 +1019,8 @@
       font-weight: 900;
       letter-spacing: -0.01em;
       text-transform: none;
-      background: linear-gradient(135deg, #ffffff, #ded3ff);
-      box-shadow: 0 14px 34px rgba(139, 92, 246, 0.26);
+      background: linear-gradient(135deg, #ffffff, #ead7df 48%, #ded3ff);
+      box-shadow: 0 14px 34px rgba(127, 29, 45, 0.22), 0 10px 28px rgba(139, 92, 246, 0.18);
     }
 
     button.secondary {
@@ -1078,9 +1082,14 @@
     }
 
     .tab.active {
-      background: rgba(139, 92, 246, 0.24);
+      background: linear-gradient(135deg, rgba(127, 29, 45, 0.26), rgba(139, 92, 246, 0.20));
       border-color: rgba(199,167,255,0.38);
-      box-shadow: inset 0 0 24px rgba(199,167,255,0.08);
+      box-shadow: inset 0 0 24px rgba(163, 52, 76, 0.12);
+    }
+
+    .step-tab:hover {
+      background: linear-gradient(135deg, rgba(127, 29, 45, 0.22), rgba(139, 92, 246, 0.14));
+      border-color: rgba(199,167,255,0.28);
     }
 
     .panel { padding: clamp(24px, 4vw, 36px); }
@@ -1221,6 +1230,12 @@
       min-height: 44px;
     }
 
+    input:focus,
+    textarea:focus {
+      border-color: rgba(199, 167, 255, 0.70);
+      box-shadow: 0 0 0 4px rgba(127, 29, 45, 0.12), 0 0 24px rgba(139, 92, 246, 0.10);
+    }
+
     .question-row {
       grid-template-columns: minmax(0, 620px) 270px;
       justify-content: space-between;
@@ -1271,6 +1286,12 @@
       gap: 6px;
     }
 
+    .chip:hover,
+    .chip.active {
+      background: linear-gradient(135deg, rgba(127, 29, 45, 0.24), rgba(139, 92, 246, 0.20));
+      border-color: rgba(199,167,255,0.40);
+    }
+
     @keyframes heroTicker {
       from { transform: translateX(8%); }
       to { transform: translateX(-46%); }
@@ -1288,8 +1309,13 @@
     .share-card {
       border-radius: 26px;
       background:
-        radial-gradient(circle at 16% 0%, rgba(139,92,246,0.26), transparent 38%),
+        radial-gradient(circle at 16% 0%, rgba(127, 29, 45, 0.28), transparent 36%),
+        radial-gradient(circle at 78% 8%, rgba(139,92,246,0.22), transparent 38%),
         linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.045));
+    }
+
+    .unknowns code {
+      background: linear-gradient(135deg, rgba(127, 29, 45, 0.22), rgba(139,92,246,0.14));
     }
 
     .share-card h2,

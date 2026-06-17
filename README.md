@@ -2,15 +2,13 @@
 
 A static archetype dossier generator built from colour psychology, animal instinct layers, temperament scoring, master profile readings, and compatibility readings.
 
-## Current App Entry Points
+## Current App Entry Point
 
-- `index.html` - preserved working single-file prototype.
-- `old.html` - preserved older snapshot/reference.
-- `app/index.html` - modular static app shell generated from the current prototype.
+- `app/index.html` - the modular static app. This is the file to open.
 
 ## Run Locally
 
-Open `app/index.html` in a browser, or serve the folder with any static server.
+Open `app/index.html` in a browser, or serve the repo root with any static server (e.g. `python3 -m http.server`).
 
 ## Shipping Notes
 

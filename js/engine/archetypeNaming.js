@@ -60,9 +60,10 @@ function getPrimaryTemperament(profile) {
       const innerCore = profile.animals[2];
       if (innerCore?.data?.shadow) return innerCore.data.shadow.replace(/^In shadow,?\s*/i, "");
       const firstColour = profile.colours.find(colour => colour.data);
-      if (firstColour?.data?.paragraph) {
-        const shadow = firstColour.data.paragraph.split("The shadow is ")[1];
-        if (shadow) return shadow;
+      if (firstColour?.data) {
+        if (firstColour.data.shadow) return firstColour.data.shadow;
+        const fromParagraph = firstColour.data.paragraph?.split("The shadow is ")[1];
+        if (fromParagraph) return fromParagraph;
       }
       return "This profile needs sharper library entries before the shadow edge can fully resolve.";
     }

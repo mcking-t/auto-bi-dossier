@@ -32,9 +32,9 @@ function generateSignalSummary(profile) {
     function generateAnimalBlock(profile) {
       const [surface, selfImage, innerCore] = profile.animals;
       const blocks = [
-        { index: "01", title: "Surface Layer", subtitle: "what people meet first", animal: surface, field: "surface" },
-        { index: "02", title: "Self-Image Layer", subtitle: "the version they protect", animal: selfImage, field: "selfImage" },
-        { index: "03", title: "Inner Core Layer", subtitle: "what sits underneath", animal: innerCore, field: "innerCore" }
+        { index: "01", title: "Surface Layer", subtitle: "how people see you", animal: surface, field: "surface" },
+        { index: "02", title: "Self-Image Layer", subtitle: "how you see yourself", animal: selfImage, field: "selfImage" },
+        { index: "03", title: "Inner Core Layer", subtitle: "how you really are deep down", animal: innerCore, field: "innerCore" }
       ];
       const cards = blocks.map(block => {
         const a = block.animal;

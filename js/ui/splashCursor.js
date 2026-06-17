@@ -19,9 +19,19 @@
   let width = 0;
   let height = 0;
   let rafId = null;
+  let cursorRafId = null;
   let lastMove = 0;
   let lastX = 0;
   let lastY = 0;
+  let cursorDot;
+  let cursorRing;
+  let cursorStyle;
+  let pointerActive = false;
+  let targetX = 0;
+  let targetY = 0;
+  let ringX = 0;
+  let ringY = 0;
+  let pulseUntil = 0;
   let visible = true;
 
   function init() {
@@ -40,6 +50,8 @@
     ].join(";");
 
     document.body.prepend(canvas);
+    initCursorLayer();
+
     ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) {
       canvas.remove();
@@ -50,8 +62,78 @@
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
     reduceMotion.addEventListener?.("change", handleMotionChange);
+  }
+
+  function initCursorLayer() {
+    cursorStyle = document.createElement("style");
+    cursorStyle.id = "velvet-cursor-style";
+    cursorStyle.textContent = `
+      body.velvet-cursor-active,
+      body.velvet-cursor-active a,
+      body.velvet-cursor-active button,
+      body.velvet-cursor-active summary,
+      body.velvet-cursor-active [role="button"] {
+        cursor: none;
+      }
+
+      body.velvet-cursor-active input,
+      body.velvet-cursor-active textarea,
+      body.velvet-cursor-active select,
+      body.velvet-cursor-active [contenteditable="true"] {
+        cursor: auto;
+      }
+
+      .velvet-cursor-dot,
+      .velvet-cursor-ring {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 30;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate3d(-50px, -50px, 0);
+        transition: opacity 180ms ease, width 160ms ease, height 160ms ease, border-color 160ms ease, background 160ms ease;
+        will-change: transform, opacity, width, height;
+      }
+
+      .velvet-cursor-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(199, 167, 255, 0.92);
+        box-shadow: 0 0 18px rgba(163, 52, 76, 0.46), 0 0 26px rgba(139, 92, 246, 0.24);
+      }
+
+      .velvet-cursor-ring {
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgba(200, 184, 255, 0.32);
+        border-radius: 999px;
+        box-shadow: inset 0 0 18px rgba(139, 92, 246, 0.08), 0 0 24px rgba(59, 7, 16, 0.24);
+      }
+
+      .velvet-cursor-visible .velvet-cursor-dot,
+      .velvet-cursor-visible .velvet-cursor-ring {
+        opacity: 1;
+      }
+    `;
+    document.head.append(cursorStyle);
+
+    cursorDot = document.createElement("div");
+    cursorDot.id = "cursor";
+    cursorDot.className = "velvet-cursor-dot";
+    cursorDot.setAttribute("aria-hidden", "true");
+
+    cursorRing = document.createElement("div");
+    cursorRing.id = "cursorRing";
+    cursorRing.className = "velvet-cursor-ring";
+    cursorRing.setAttribute("aria-hidden", "true");
+
+    document.body.append(cursorDot, cursorRing);
+    document.body.classList.add("velvet-cursor-active");
   }
 
   function resize() {
@@ -64,6 +146,8 @@
   }
 
   function handlePointerMove(event) {
+    updateCursorTarget(event.clientX, event.clientY);
+
     const now = performance.now();
     if (now - lastMove < 18) return;
 
@@ -77,13 +161,36 @@
   }
 
   function handlePointerDown(event) {
+    updateCursorTarget(event.clientX, event.clientY);
+    pulseUntil = performance.now() + 180;
     addSplat(event.clientX, event.clientY, 9, true);
     start();
+  }
+
+  function handlePointerLeave() {
+    pointerActive = false;
+    document.body.classList.remove("velvet-cursor-visible");
+  }
+
+  function updateCursorTarget(x, y) {
+    targetX = x;
+    targetY = y;
+
+    if (!pointerActive) {
+      ringX = x;
+      ringY = y;
+      pointerActive = true;
+      document.body.classList.add("velvet-cursor-visible");
+    }
+
+    startCursor();
   }
 
   function handleVisibilityChange() {
     visible = !document.hidden;
     if (visible && particles.length) start();
+    if (visible && pointerActive) startCursor();
+    if (!visible) stopCursor();
   }
 
   function handleMotionChange(event) {
@@ -116,6 +223,37 @@
 
   function start() {
     if (!rafId && visible) rafId = requestAnimationFrame(draw);
+  }
+
+  function startCursor() {
+    if (!cursorRafId && visible) cursorRafId = requestAnimationFrame(drawCursor);
+  }
+
+  function stopCursor() {
+    if (cursorRafId) cancelAnimationFrame(cursorRafId);
+    cursorRafId = null;
+  }
+
+  function drawCursor() {
+    cursorRafId = null;
+    if (!visible || !pointerActive || !cursorDot || !cursorRing) return;
+
+    ringX += (targetX - ringX) * 0.18;
+    ringY += (targetY - ringY) * 0.18;
+
+    const pulsing = performance.now() < pulseUntil;
+    const ringSize = pulsing ? 42 : 30;
+    const ringOffset = ringSize / 2;
+
+    cursorDot.style.transform = `translate3d(${targetX - 3.5}px, ${targetY - 3.5}px, 0)`;
+    cursorRing.style.width = `${ringSize}px`;
+    cursorRing.style.height = `${ringSize}px`;
+    cursorRing.style.borderColor = pulsing ? "rgba(199, 167, 255, 0.54)" : "rgba(200, 184, 255, 0.32)";
+    cursorRing.style.transform = `translate3d(${ringX - ringOffset}px, ${ringY - ringOffset}px, 0)`;
+
+    if (Math.hypot(targetX - ringX, targetY - ringY) > 0.12 || pulsing) {
+      cursorRafId = requestAnimationFrame(drawCursor);
+    }
   }
 
   function draw() {
@@ -172,14 +310,20 @@
 
   function destroy() {
     if (rafId) cancelAnimationFrame(rafId);
+    stopCursor();
     rafId = null;
     particles.length = 0;
     window.removeEventListener("resize", resize);
     window.removeEventListener("pointermove", handlePointerMove);
     window.removeEventListener("pointerdown", handlePointerDown);
+    window.removeEventListener("pointerleave", handlePointerLeave);
     document.removeEventListener("visibilitychange", handleVisibilityChange);
     reduceMotion.removeEventListener?.("change", handleMotionChange);
     canvas?.remove();
+    cursorDot?.remove();
+    cursorRing?.remove();
+    cursorStyle?.remove();
+    document.body.classList.remove("velvet-cursor-active", "velvet-cursor-visible");
   }
 
   document.addEventListener("DOMContentLoaded", init, { once: true });

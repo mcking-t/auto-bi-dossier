@@ -13,6 +13,10 @@
   ];
 
   const maxParticles = 96;
+  const storageKeys = {
+    splash: "autobiDossierSplashCursor",
+    ring: "autobiDossierRingCursor"
+  };
   const particles = [];
   let canvas;
   let ctx;
@@ -26,6 +30,11 @@
   let cursorDot;
   let cursorRing;
   let cursorStyle;
+  let togglePanel;
+  let splashToggle;
+  let ringToggle;
+  let splashEnabled = readLayerPreference(storageKeys.splash);
+  let ringEnabled = readLayerPreference(storageKeys.ring);
   let pointerActive = false;
   let targetX = 0;
   let targetY = 0;
@@ -51,6 +60,7 @@
 
     document.body.prepend(canvas);
     initCursorLayer();
+    initTogglePanel();
 
     ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) {
@@ -59,6 +69,7 @@
     }
 
     resize();
+    syncLayerState();
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
@@ -79,6 +90,8 @@
         cursor: none;
       }
 
+      body.velvet-cursor-active .cursor-toggle-panel,
+      body.velvet-cursor-active .cursor-toggle-panel button,
       body.velvet-cursor-active input,
       body.velvet-cursor-active textarea,
       body.velvet-cursor-active select,
@@ -119,6 +132,60 @@
       .velvet-cursor-visible .velvet-cursor-ring {
         opacity: 1;
       }
+
+      .cursor-toggle-panel {
+        position: fixed;
+        right: max(18px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+        z-index: 80;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px;
+        border: 1px solid rgba(200, 184, 255, 0.18);
+        border-radius: 999px;
+        background: rgba(6, 5, 10, 0.72);
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(16px);
+      }
+
+      .cursor-toggle-panel span {
+        padding: 0 7px 0 10px;
+        color: rgba(236, 232, 245, 0.58);
+        font: 700 10px/1 var(--mono, monospace);
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .cursor-toggle-panel button {
+        min-width: 62px;
+        min-height: 32px;
+        border: 1px solid rgba(200, 184, 255, 0.2);
+        border-radius: 999px;
+        color: rgba(236, 232, 245, 0.62);
+        background: rgba(255, 255, 255, 0.035);
+        font: 700 11px/1 var(--sans, system-ui, sans-serif);
+        letter-spacing: 0;
+        transition: border-color 160ms ease, color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .cursor-toggle-panel button.is-active {
+        border-color: rgba(199, 167, 255, 0.46);
+        color: rgba(255, 255, 255, 0.94);
+        background: linear-gradient(135deg, rgba(59, 7, 16, 0.72), rgba(139, 92, 246, 0.32));
+        box-shadow: 0 0 20px rgba(127, 29, 45, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+
+      .cursor-toggle-panel button:focus-visible {
+        outline: 2px solid rgba(199, 167, 255, 0.72);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 720px) {
+        .cursor-toggle-panel {
+          display: none;
+        }
+      }
     `;
     document.head.append(cursorStyle);
 
@@ -133,7 +200,80 @@
     cursorRing.setAttribute("aria-hidden", "true");
 
     document.body.append(cursorDot, cursorRing);
-    document.body.classList.add("velvet-cursor-active");
+  }
+
+  function initTogglePanel() {
+    togglePanel = document.createElement("div");
+    togglePanel.className = "cursor-toggle-panel";
+    togglePanel.setAttribute("aria-label", "Cursor effects");
+    togglePanel.innerHTML = `
+      <span>FX</span>
+      <button type="button" data-layer="splash">Smoke</button>
+      <button type="button" data-layer="ring">Cursor</button>
+    `;
+
+    splashToggle = togglePanel.querySelector('[data-layer="splash"]');
+    ringToggle = togglePanel.querySelector('[data-layer="ring"]');
+    splashToggle.addEventListener("click", () => toggleLayer("splash"));
+    ringToggle.addEventListener("click", () => toggleLayer("ring"));
+    document.body.append(togglePanel);
+  }
+
+  function readLayerPreference(key) {
+    try {
+      return localStorage.getItem(key) !== "off";
+    } catch {
+      return true;
+    }
+  }
+
+  function saveLayerPreference(key, enabled) {
+    try {
+      localStorage.setItem(key, enabled ? "on" : "off");
+    } catch {
+      // Ignore storage failures; the toggles still work for the current visit.
+    }
+  }
+
+  function toggleLayer(layer) {
+    if (layer === "splash") {
+      splashEnabled = !splashEnabled;
+      saveLayerPreference(storageKeys.splash, splashEnabled);
+    } else {
+      ringEnabled = !ringEnabled;
+      saveLayerPreference(storageKeys.ring, ringEnabled);
+    }
+
+    syncLayerState();
+  }
+
+  function syncLayerState() {
+    canvas.style.display = splashEnabled ? "block" : "none";
+    document.body.classList.toggle("velvet-cursor-active", ringEnabled);
+    document.body.classList.toggle("velvet-cursor-visible", ringEnabled && pointerActive && visible);
+
+    if (cursorDot && cursorRing) {
+      const display = ringEnabled ? "block" : "none";
+      cursorDot.style.display = display;
+      cursorRing.style.display = display;
+    }
+
+    if (!splashEnabled) {
+      particles.length = 0;
+      ctx?.clearRect(0, 0, width, height);
+    }
+
+    if (!ringEnabled) stopCursor();
+
+    updateToggleButton(splashToggle, splashEnabled);
+    updateToggleButton(ringToggle, ringEnabled);
+  }
+
+  function updateToggleButton(button, enabled) {
+    if (!button) return;
+    button.classList.toggle("is-active", enabled);
+    button.setAttribute("aria-pressed", String(enabled));
+    button.setAttribute("title", `${button.textContent} effect ${enabled ? "on" : "off"}`);
   }
 
   function resize() {
@@ -146,10 +286,10 @@
   }
 
   function handlePointerMove(event) {
-    updateCursorTarget(event.clientX, event.clientY);
+    if (ringEnabled) updateCursorTarget(event.clientX, event.clientY);
 
     const now = performance.now();
-    if (now - lastMove < 18) return;
+    if (!splashEnabled || now - lastMove < 18) return;
 
     const distance = Math.hypot(event.clientX - lastX, event.clientY - lastY);
     lastMove = now;
@@ -161,10 +301,15 @@
   }
 
   function handlePointerDown(event) {
-    updateCursorTarget(event.clientX, event.clientY);
-    pulseUntil = performance.now() + 180;
-    addSplat(event.clientX, event.clientY, 9, true);
-    start();
+    if (ringEnabled) {
+      updateCursorTarget(event.clientX, event.clientY);
+      pulseUntil = performance.now() + 180;
+    }
+
+    if (splashEnabled) {
+      addSplat(event.clientX, event.clientY, 9, true);
+      start();
+    }
   }
 
   function handlePointerLeave() {
@@ -173,6 +318,8 @@
   }
 
   function updateCursorTarget(x, y) {
+    if (!ringEnabled) return;
+
     targetX = x;
     targetY = y;
 
@@ -188,8 +335,8 @@
 
   function handleVisibilityChange() {
     visible = !document.hidden;
-    if (visible && particles.length) start();
-    if (visible && pointerActive) startCursor();
+    if (visible && splashEnabled && particles.length) start();
+    if (visible && ringEnabled && pointerActive) startCursor();
     if (!visible) stopCursor();
   }
 
@@ -222,11 +369,11 @@
   }
 
   function start() {
-    if (!rafId && visible) rafId = requestAnimationFrame(draw);
+    if (!rafId && visible && splashEnabled) rafId = requestAnimationFrame(draw);
   }
 
   function startCursor() {
-    if (!cursorRafId && visible) cursorRafId = requestAnimationFrame(drawCursor);
+    if (!cursorRafId && visible && ringEnabled) cursorRafId = requestAnimationFrame(drawCursor);
   }
 
   function stopCursor() {
@@ -236,7 +383,7 @@
 
   function drawCursor() {
     cursorRafId = null;
-    if (!visible || !pointerActive || !cursorDot || !cursorRing) return;
+    if (!visible || !ringEnabled || !pointerActive || !cursorDot || !cursorRing) return;
 
     ringX += (targetX - ringX) * 0.18;
     ringY += (targetY - ringY) * 0.18;
@@ -258,7 +405,7 @@
 
   function draw() {
     rafId = null;
-    if (!visible) return;
+    if (!visible || !splashEnabled) return;
 
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = "lighter";
@@ -323,6 +470,7 @@
     cursorDot?.remove();
     cursorRing?.remove();
     cursorStyle?.remove();
+    togglePanel?.remove();
     document.body.classList.remove("velvet-cursor-active", "velvet-cursor-visible");
   }
 

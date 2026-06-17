@@ -14,7 +14,7 @@ function makePersonForm(formId, label) {
           <h3><span class="section-index">01</span> Identity</h3>
           <div class="field-grid">
             <label>Name
-              <input name="name" placeholder="Moe" ${suffix === "A" ? "value='Moe'" : ""} />
+              <input name="name" placeholder="Moe" />
             </label>
             <label>Optional note
               <input name="note" placeholder="Age, context, vibe, relationship, etc." />
@@ -26,7 +26,7 @@ function makePersonForm(formId, label) {
           <h3><span class="section-index">02</span> Colours</h3>
           <div class="field-grid single">
             <label>Favourite colours, separated by commas
-              <input name="colours" placeholder="black, purple" ${suffix === "A" ? "value='black, purple'" : ""} required />
+              <input name="colours" placeholder="black, purple" required />
             </label>
           </div>
         </div>
@@ -35,13 +35,13 @@ function makePersonForm(formId, label) {
           <h3><span class="section-index">03</span> Instinct sequence</h3>
           <div class="field-grid single">
             <label>1. What’s your favourite animal?
-              <input name="animal1" placeholder="Monkey" ${suffix === "A" ? "value='Monkey'" : ""} required />
+              <input name="animal1" placeholder="Monkey" required />
             </label>
             <label>2. If that animal didn’t exist, what would be your next favourite animal?
-              <input name="animal2" placeholder="Black Panther" ${suffix === "A" ? "value='Black Panther'" : ""} required />
+              <input name="animal2" placeholder="Black Panther" required />
             </label>
             <label>3. If the first two animals didn’t exist, what would be your final favourite animal?
-              <input name="animal3" placeholder="Belgian Malinois" ${suffix === "A" ? "value='Belgian Malinois'" : ""} required />
+              <input name="animal3" placeholder="Belgian Malinois" required />
             </label>
           </div>
         </div>
